@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'PODOLSKY.zip'
+      - 'PODOLSKY-AI.zip'
       - '.github/workflows/android.yml'
 
 permissions:
@@ -20,11 +20,12 @@ jobs:
 
       - name: Verificar ZIP
         run: |
-          test -f PODOLSKY.zip
-          unzip -t PODOLSKY.zip
+          ls -la
+          test -f PODOLSKY-AI.zip
+          unzip -t PODOLSKY-AI.zip
 
       - name: Extrair projeto
-        run: unzip -o PODOLSKY.zip -d .
+        run: unzip -o PODOLSKY-AI.zip -d .
 
       - name: Configurar Java
         uses: actions/setup-java@v4
@@ -35,7 +36,7 @@ jobs:
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Instalar SDK
+      - name: Instalar SDK Android
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
       - name: Configurar Gradle
