@@ -1,4 +1,4 @@
-name: Build PODOLSKY AI APK
+name: PODOLSKY AI - Build APK
 
 on:
   workflow_dispatch:
@@ -14,17 +14,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+
     steps:
       - name: Obter projeto
         uses: actions/checkout@v4
 
-      - name: Verificar ZIP
+      - name: Verificar arquivo ZIP
         run: |
+          set -e
+          ls -lh
           test -f PODOLSKY-AI.zip
           unzip -t PODOLSKY-AI.zip
 
       - name: Extrair projeto
-        run: unzip -o PODOLSKY-AI.zip -d .
+        run: |
+          set -e
+          unzip -o PODOLSKY-AI.zip -d .
+          test -f app/build.gradle
+          test -f settings.gradle
+          test -f build.gradle
 
       - name: Configurar Java
         uses: actions/setup-java@v4
@@ -32,21 +43,40 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Preparar Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Diagnosticar Android SDK
+        run: |
+          echo "=== SISTEMA ==="
+          java -version
+          echo "=== ANDROID HOME ==="
+          echo "$ANDROID_HOME"
+          echo "=== SDK INSTALADO ==="
+          ls -la "$ANDROID_HOME" || true
+          echo "=== PROCURAR SDKMANAGER ==="
+          find "$ANDROID_HOME" -name sdkmanager -type f 2>/dev/null || true
+          echo "=== VARIÁVEIS ==="
+          env | grep -E 'ANDROID|JAVA_HOME' || true
 
       - name: Instalar componentes Android
         run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+          set -e
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME" -name sdkmanager -type f 2>/dev/null | head -n 1)"
+          fi
+          if [ -z "$SDKMANAGER" ] || [ ! -x "$SDKMANAGER" ]; then
+            echo "ERRO: sdkmanager não encontrado."
+            exit 1
+          fi
+          yes | "$SDKMANAGER" --licenses || true
+          "$SDKMANAGER" --install "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Configurar Gradle
+      - name: Preparar Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
 
       - name: Compilar APK
-        run: gradle assembleDebug
+        run: gradle assembleDebug --stacktrace
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
