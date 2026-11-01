@@ -20,7 +20,6 @@ jobs:
 
       - name: Verificar ZIP
         run: |
-          ls -la
           test -f PODOLSKY-AI.zip
           unzip -t PODOLSKY-AI.zip
 
@@ -33,11 +32,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Configurar Android SDK
+      - name: Preparar Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Instalar SDK Android
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Instalar componentes Android
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
 
       - name: Configurar Gradle
         uses: gradle/actions/setup-gradle@v4
