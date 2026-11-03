@@ -1,0 +1,25 @@
+WYZEN P - primeira base integrada
+
+O QUE ESTA VERSAO TEM:
+- Interface Android nativa.
+- Respostas faladas com TextToSpeech em português de Portugal, se a voz estiver instalada no Android.
+- Reconhecimento de voz com preferência por reconhecimento offline (EXTRA_PREFER_OFFLINE).
+- Comandos locais: bateria, data, hora, diagnóstico básico, contagem/pesquisa de contactos.
+- Preparação de chamadas no marcador Android (o utilizador confirma a chamada).
+- Seletor de pastas Android para escolher uma pasta acessível.
+- Workflow GitHub Actions para compilar APK debug.
+
+LIMITAÇÕES IMPORTANTES:
+- EXTRA_PREFER_OFFLINE é uma preferência do Android, não uma garantia. O reconhecimento só funciona totalmente offline se o serviço de voz e o pacote de idioma offline estiverem instalados e suportarem português.
+- A voz masculina depende das vozes instaladas no motor TTS do telefone; pode ser escolhida nas definições de Texto para voz do Android.
+- A palavra de ativação "Wyzen" sempre a ouvir ainda NÃO está implementada. Android restringe microfone em segundo plano; requer serviço em primeiro plano, notificação, permissões e testes específicos.
+- SMS: esta base ainda não lê nem envia SMS automaticamente. O envio deve abrir a aplicação de mensagens para revisão e confirmação.
+- A escolha de pasta abre o seletor do Android; inventário recursivo e pesquisa de ficheiros ainda precisam de implementação.
+- Contagem de SMS pode exigir permissões/ser app SMS predefinida e está sujeita às políticas Android/Google Play.
+- O código é uma base inicial integrada, não uma versão final certificada. Deve ser compilado e testado num dispositivo antes de uso.
+
+COMO COMPILAR:
+1. Envia o conteúdo desta pasta para o repositório GitHub WYZEN-P.
+2. Abre o separador Actions.
+3. Executa "Build WYZEN P APK" (ou faz push para main/master).
+4. Abre a execução concluída e descarrega o artefacto WYZEN-P-debug-apk.
